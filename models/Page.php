@@ -36,12 +36,19 @@ class Page extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'title'], 'required'],
-            [['user_id', 'live'], 'integer'],
-            [['content'], 'string'],
-            [['date_updated', 'date_published'], 'safe'],
+            // Only the title is required from the user:
+            [['title'], 'required'],
+            // User must exist in the related table:
+            [['user_id'], 'exist', 'skipOnError' => false, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
+            // Live needs to be Boolean; default 0:
+            [['live'], 'integer'],
+            [['live'], 'default', 'value' => 0],
+            // Title has a max length and strip tags:
             [['title'], 'string', 'max' => 100],
-            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
+            [['title'], 'filter', 'filter' => 'strip_tags'],
+            // Filter the content to allow for NULL values:
+            [['content'], 'string'],
+            [['content'], 'default', 'value' => NULL],
         ];
     }
 

@@ -32,12 +32,19 @@ class Comment extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'page_id', 'comment'], 'required'],
-            [['user_id', 'page_id'], 'integer'],
+            // Required attributes (by the commentor):
+            [['username', 'user_email', 'comment'], 'required'],
+            // Must be in related tables:
+            [['page_id'], 'integer'],
+            [['page_id'], 'exist', 'skipOnError' => true, 'targetClass' => Page::class, 'targetAttribute' => ['page_id' => 'id']],
+            // Strip tags from the comments:
             [['comment'], 'string'],
-            [['date_entered'], 'safe'],
-            [['page_id'], 'exist', 'skipOnError' => true, 'targetClass' => Page::className(), 'targetAttribute' => ['page_id' => 'id']],
-            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
+            [['comment'], 'filter', 'filter' => 'strip_tags'],
+            // Username limited to 45:
+            [['username'], 'string', 'max' => 45],
+            // Email limited to 60 and must be an email address:
+            [['user_email'], 'string', 'max' => 60],
+            [['user_email'], 'email'],
         ];
     }
 

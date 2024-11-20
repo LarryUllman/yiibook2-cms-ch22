@@ -34,14 +34,24 @@ class User extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['username', 'email', 'type'], 'required'],
-            [['type'], 'string'],
-            [['date_entered'], 'safe'],
-            [['username'], 'string', 'max' => 45],
-            [['email'], 'string', 'max' => 60],
-            [['pass'], 'string', 'max' => 64],
+            // Required fields when registering:
+            [['username', 'email', 'pass'], 'required', 'on'=>'register'],
+            // Required fields when logging in:
+            [['username', 'pass'], 'required', 'on'=>'login'],
+            // Encrypt the password when registering:
+            [['pass'], 'encryptPassword', 'on'=>'register'],
+            // Username must be unique and less than 45 characters:
             [['username'], 'unique'],
+            [['username'], 'string', 'max' => 45],
+            // Email address must be unique, an email address, 
+            // and less than 60 characters:
             [['email'], 'unique'],
+            [['email'], 'email'],
+            [['email'], 'string', 'max' => 60],
+            // Set the type to "author" by default:
+            [['type'], 'default', 'value' => 'author']
+            // Type must also be one of three values:
+            [['type'], 'in', 'range' => ['author', 'editor', 'admin']],
         ];
     }
 
