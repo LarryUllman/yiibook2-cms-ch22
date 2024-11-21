@@ -49,7 +49,7 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             [['email'], 'email'],
             [['email'], 'string', 'max' => 60],
             // Set the type to "author" by default:
-            [['type'], 'default', 'value' => 'author']
+            [['type'], 'default', 'value' => 'author'],
             // Type must also be one of three values:
             [['type'], 'in', 'range' => ['author', 'editor', 'admin']],
         ];

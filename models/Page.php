@@ -107,4 +107,23 @@ class Page extends \yii\db\ActiveRecord
     {
         return $this->hasMany(File::className(), ['id' => 'file_id'])->viaTable('page_has_file', ['page_id' => 'id']);
     }
+
+    public function beforeValidate()
+    {
+        if(empty($this->user_id)) {
+            $session = Yii::$app->session;
+            if (!$session->isActive) $session->open();
+            $this->user_id = $session['user_id'];
+        }
+        return parent::beforeValidate();
+    }
+
+    public function formattedPublishedDate() 
+    {
+        if ($this->date_published) {
+            $formatter = \Yii::$app->formatter;
+            return $formatter->asDate($this->date_published, 'long');
+        }
+    }
+    
 }
