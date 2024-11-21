@@ -18,7 +18,7 @@ use Yii;
  * @property File[] $files
  * @property Page[] $pages
  */
-class User extends \yii\db\ActiveRecord
+class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
 {
     /**
      * {@inheritdoc}
@@ -98,5 +98,31 @@ class User extends \yii\db\ActiveRecord
     public function getPages()
     {
         return $this->hasMany(Page::className(), ['user_id' => 'id']);
+    }
+
+    public function validatePassword($loginPass) 
+    {
+        return password_verify($loginPass, $this->pass);
+    }
+
+    public function encryptPassword($attr, $params) 
+    {
+		$this->pass = password_hash($this->pass);
+    }
+
+    public static function findIdentityByAccessToken($token, $type= null) {
+    }
+    public function getAuthKey() {
+    }
+    public function validateAuthKey($authKey) 
+    {
+    }
+    public function getId() 
+    {
+        return $this->id;
+    }
+    public static function findIdentity($id) 
+    {
+        return User::findOne($id);
     }
 }
