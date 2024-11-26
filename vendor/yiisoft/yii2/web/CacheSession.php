@@ -1,13 +1,12 @@
 <?php
 /**
- * @link http://www.yiiframework.com/
+ * @link https://www.yiiframework.com/
  * @copyright Copyright (c) 2008 Yii Software LLC
- * @license http://www.yiiframework.com/license/
+ * @license https://www.yiiframework.com/license/
  */
 
 namespace yii\web;
 
-use Yii;
 use yii\caching\CacheInterface;
 use yii\di\Instance;
 
@@ -31,7 +30,7 @@ use yii\di\Instance;
  * ]
  * ```
  *
- * @property-read bool $useCustomStorage Whether to use custom storage. This property is read-only.
+ * @property-read bool $useCustomStorage Whether to use custom storage.
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @since 2.0

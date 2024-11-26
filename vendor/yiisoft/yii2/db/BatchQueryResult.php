@@ -1,8 +1,8 @@
 <?php
 /**
- * @link http://www.yiiframework.com/
+ * @link https://www.yiiframework.com/
  * @copyright Copyright (c) 2008 Yii Software LLC
- * @license http://www.yiiframework.com/license/
+ * @license https://www.yiiframework.com/license/
  */
 
 namespace yii\db;
@@ -41,9 +41,14 @@ class BatchQueryResult extends Component implements \Iterator
      * @since 2.0.41
      */
     const EVENT_FINISH = 'finish';
+    /**
+     * MSSQL error code for exception that is thrown when last batch is size less than specified batch size
+     * @see https://github.com/yiisoft/yii2/issues/10023
+     */
+    const MSSQL_NO_MORE_ROWS_ERROR_CODE = -13;
 
     /**
-     * @var Connection the DB connection to be used when performing batch query.
+     * @var Connection|null the DB connection to be used when performing batch query.
      * If null, the "db" application component will be used.
      */
     public $db;
@@ -78,11 +83,6 @@ class BatchQueryResult extends Component implements \Iterator
      * @var string|int the key for the current iteration
      */
     private $_key;
-    /**
-     * @var int MSSQL error code for exception that is thrown when last batch is size less than specified batch size
-     * @see https://github.com/yiisoft/yii2/issues/10023
-     */
-    private $mssqlNoMoreRowsErrorCode = -13;
 
 
     /**
@@ -114,6 +114,7 @@ class BatchQueryResult extends Component implements \Iterator
      * Resets the iterator to the initial state.
      * This method is required by the interface [[\Iterator]].
      */
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         $this->reset();
@@ -124,6 +125,7 @@ class BatchQueryResult extends Component implements \Iterator
      * Moves the internal pointer to the next dataset.
      * This method is required by the interface [[\Iterator]].
      */
+    #[\ReturnTypeWillChange]
     public function next()
     {
         if ($this->_batch === null || !$this->each || $this->each && next($this->_batch) === false) {
@@ -184,7 +186,7 @@ class BatchQueryResult extends Component implements \Iterator
             }
         } catch (\PDOException $e) {
             $errorCode = isset($e->errorInfo[1]) ? $e->errorInfo[1] : null;
-            if ($this->getDbDriverName() !== 'sqlsrv' || $errorCode !== $this->mssqlNoMoreRowsErrorCode) {
+            if ($this->getDbDriverName() !== 'sqlsrv' || $errorCode !== self::MSSQL_NO_MORE_ROWS_ERROR_CODE) {
                 throw $e;
             }
         }
@@ -197,6 +199,7 @@ class BatchQueryResult extends Component implements \Iterator
      * This method is required by the interface [[\Iterator]].
      * @return int the index of the current row.
      */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return $this->_key;
@@ -207,6 +210,7 @@ class BatchQueryResult extends Component implements \Iterator
      * This method is required by the interface [[\Iterator]].
      * @return mixed the current dataset.
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         return $this->_value;
@@ -217,6 +221,7 @@ class BatchQueryResult extends Component implements \Iterator
      * This method is required by the interface [[\Iterator]].
      * @return bool whether there is a valid dataset at the current position.
      */
+    #[\ReturnTypeWillChange]
     public function valid()
     {
         return !empty($this->_batch);
@@ -246,7 +251,7 @@ class BatchQueryResult extends Component implements \Iterator
     /**
      * Unserialization is disabled to prevent remote code execution in case application
      * calls unserialize() on user input containing specially crafted string.
-     * @see CVE-2020-15148
+     * @see https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2020-15148
      * @since 2.0.38
      */
     public function __wakeup()

@@ -23,47 +23,28 @@ namespace Symfony\Component\CssSelector\Node;
  */
 class ElementNode extends AbstractNode
 {
-    private $namespace;
-    private $element;
-
-    /**
-     * @param string|null $namespace
-     * @param string|null $element
-     */
-    public function __construct($namespace = null, $element = null)
-    {
-        $this->namespace = $namespace;
-        $this->element = $element;
+    public function __construct(
+        private ?string $namespace = null,
+        private ?string $element = null,
+    ) {
     }
 
-    /**
-     * @return string|null
-     */
-    public function getNamespace()
+    public function getNamespace(): ?string
     {
         return $this->namespace;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getElement()
+    public function getElement(): ?string
     {
         return $this->element;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getSpecificity()
+    public function getSpecificity(): Specificity
     {
         return new Specificity(0, 0, $this->element ? 1 : 0);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function __toString()
+    public function __toString(): string
     {
         $element = $this->element ?: '*';
 

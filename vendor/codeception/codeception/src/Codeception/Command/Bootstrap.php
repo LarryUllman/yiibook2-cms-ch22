@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Codeception\Command;
 
 use Codeception\Template\Bootstrap as BootstrapTemplate;
@@ -12,7 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Creates default config, tests directory and sample suites for current project.
  * Use this command to start building a test suite.
  *
- * By default it will create 3 suites **acceptance**, **functional**, and **unit**.
+ * By default it will create 3 suites **Acceptance**, **Functional**, and **Unit**.
  *
  * * `codecept bootstrap` - creates `tests` dir and `codeception.yml` in current dir.
  * * `codecept bootstrap --empty` - creates `tests` dir without suites
@@ -23,8 +26,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class Bootstrap extends Command
 {
-
-    protected function configure()
+    protected function configure(): void
     {
         $this->setDefinition(
             [
@@ -36,17 +38,17 @@ class Bootstrap extends Command
                     'Namespace to add for actor classes and helpers'
                 ),
                 new InputOption('actor', 'a', InputOption::VALUE_OPTIONAL, 'Custom actor instead of Tester'),
-                new InputOption('empty', 'e', InputOption::VALUE_NONE, 'Don\'t create standard suites')
+                new InputOption('empty', 'e', InputOption::VALUE_NONE, "Don't create standard suites")
             ]
         );
     }
 
-    public function getDescription()
+    public function getDescription(): string
     {
         return "Creates default test suites and generates all required files";
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         $bootstrap = new BootstrapTemplate($input, $output);
         if ($input->getArgument('path')) {
